@@ -32,5 +32,8 @@
     "gtest-adapter.debugConfig": [
         "(gdb) Launch Test Debug"
     ],
-    "gtest-adapter.supportLocation": true
+    "gtest-adapter.supportLocation": true,
+    {
+        "doxygen_runner.doxygen_command": "/usr/bin/doxygen"
+    }
 }

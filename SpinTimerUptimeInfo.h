@@ -11,28 +11,23 @@
 #include <stdlib.h>
 #include "SpinTimerUptimeInfoAdapter.h"
 
-/**
- * Helper class to use the appropriate time base depending on framework.
- * Supported default frameworks:
- * - Arduino (AVR and SAM)
- * - POSIX
- */
-
-
 typedef struct SpinTimerUptimeInfo SpinTimerUptimeInfo;
 typedef struct SpinTimerUptimeInfoAttr
 {
   SpinTimerUptimeInfoAdapter* adapter;
 } SpinTimerUptimeInfoAttr;
 
+/**
+ * Helper class to use the appropriate time base depending on framework.
+ */
 struct SpinTimerUptimeInfo
 {
-    SpinTimerUptimeInfoAttr attr;
-    void (*assignAdapter)(SpinTimerUptimeInfo* me, SpinTimerUptimeInfoAdapter* adapter);
-    SpinTimerUptimeInfoAdapter* (*adapter)(SpinTimerUptimeInfo* me);
-    uint32_t (*currentTimeMicros)(SpinTimerUptimeInfo const* const me);
-    uint32_t (*maxTimeValue)(SpinTimerUptimeInfo const* const me);
-    uint32_t (*microsPerTick)(SpinTimerUptimeInfo const* const me);
+    SpinTimerUptimeInfoAttr attr;                                                         /*!< @ref SpinTimerUptimeInfoAttr */
+    void (*assignAdapter)(SpinTimerUptimeInfo* me, SpinTimerUptimeInfoAdapter* adapter);  /*!< @ref SpinTimerUptimeInfo_assignAdapter */
+    SpinTimerUptimeInfoAdapter* (*adapter)(SpinTimerUptimeInfo* me);                      /*!< @ref SpinTimerUptimeInfo_adapter */
+    uint32_t (*currentTimeMicros)(SpinTimerUptimeInfo const* const me);                   /*!< @ref SpinTimerUptimeInfo_currentTimeMicros */
+    uint32_t (*maxTimeValue)(SpinTimerUptimeInfo const* const me);                        /*!< @ref SpinTimerUptimeInfo_maxTimeValue */
+    uint32_t (*microsPerTick)(SpinTimerUptimeInfo const* const me);                       /*!< @ref SpinTimerUptimeInfo_microsPerTick */
 };
 
 SpinTimerUptimeInfo* SpinTimerUptimeInfo_instance();
@@ -40,6 +35,7 @@ void SpinTimerUptimeInfo_destroy();
 
 /**
  * @brief Get current uptime in microseconds.
+ * @param SpinTimerUptimeInfo const* const Pointer to this SpinTimerUptimeInfo object.
  * @return uint32_t current uptime [us].
  */
 static inline uint32_t SpinTimerUptimeInfo_currentTimeMicros(SpinTimerUptimeInfo const* const me)

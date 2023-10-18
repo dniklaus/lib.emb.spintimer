@@ -11,9 +11,12 @@
 typedef struct SpinTimer SpinTimer;
 typedef struct SpinTimerContext SpinTimerContext;
 
+/**
+ * @brief Attributes.
+ */
 typedef struct SpinTimerContextAttr
 {
-    SpinTimer* timer;       /// Root node of single linked list containing the timers to be kicked.
+    SpinTimer* timer;       /*!< Root node of single linked list containing the first of all SpinTimer objects to be kicked. */
 } SpinTimerContextAttr;
 
 /**
@@ -44,10 +47,10 @@ typedef struct SpinTimerContextAttr
  */
 struct SpinTimerContext
 {
-    SpinTimerContextAttr attr;
-    void (*attach)(SpinTimerContext* me, SpinTimer* timer);
-    void (*detach)(SpinTimerContext* me, SpinTimer* timer);
-    void (*handleTick)(SpinTimerContext* me);
+    SpinTimerContextAttr attr;                              /*!< Attributes, @ref SpinTimerContextAttr*/
+    void (*attach)(SpinTimerContext* me, SpinTimer* timer); /*!< @ref SpinTimerContext_attach */
+    void (*detach)(SpinTimerContext* me, SpinTimer* timer); /*!< @ref SpinTimerContext_detach */
+    void (*handleTick)(SpinTimerContext* me);               /*!< @ref SpinTimerContext_handleTick */
 };
 
 /**

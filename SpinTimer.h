@@ -6,8 +6,8 @@
 
 typedef enum SpinTimerMode
 {
-    SpinTimerMode_oneShot = 0,
-    SpinTimerMode_continuous = 1
+    SpinTimerMode_oneShot = 0,          /*!< one-shot mode: the timer stops after the interval ends. */
+    SpinTimerMode_continuous = 1        /*!< continuous mode: the timer re-starts a new interval after the previous ends. */
 } SpinTimerMode;
     
 typedef struct SpinTimerAction SpinTimerAction;
@@ -15,41 +15,45 @@ typedef struct SpinTimer SpinTimer;
 
 typedef struct SpinTimerAttributes
 {
-    SpinTimerMode mode;
-    bool isRunning;
-    bool isExpiredFlag;
-    bool willOverflow;
-    bool syncNextStartOnLastExpiry;
-    uint32_t delayMicros;
-    uint32_t currentTimeMicros;
-    uint32_t triggerTimeMicros;
-    uint32_t maxUptimeValue;
-    uint32_t microsPerTick;
-    SpinTimerAction* action;
-    SpinTimer* next;
+    SpinTimerMode mode;                 /*!< Timer mode, @ref SpinTimerMode. */
+    bool isRunning;                     /*!< Timer running flag, true: the timer is running, false: the timer isn't running. */
+    bool isExpiredFlag;                 /*!< Timer expiration flag, true: the timer has expired, false: the timer hasn't expired. */
+    bool willOverflow;                  /*!< Timer overflow flag, true: currentTimeMicros will overflow before interval ends, false: no overflow expected. */
+    bool syncNextStartOnLastExpiry;     /*!< true: the interval start will be aligned to the last expiry time when the timer gets started (again); false: the interval starts independantly at the current time when the timer gets started (again). */
+    uint32_t delayMicros;               /*!< Timer interval [us]. */
+    uint32_t currentTimeMicros;         /*!< Timer interval time measurement base [us]. */
+    uint32_t triggerTimeMicros;         /*!< Timer expiry trigger time [us]. */
+    uint32_t maxUptimeValue;            /*!< Timer time measurement base overflow limit [us]. */
+    uint32_t microsPerTick;             /*!< Timer time measurement base increments per tick [us]. */
+    SpinTimerAction* action;            /*!< Timer expiry callout action object. */
+    SpinTimer* next;                    /*!< Next Timer object in linked list. */
 } SpinTimerAttributes;
 
+/**
+ * @brief Universal Timer.
+ * @details Universal Timer with 1 microsecond resolution, running on system tick (or other clock sources).
+ */
 struct SpinTimer
 {
-    SpinTimerAttributes attr;
-    SpinTimerMode (*getMode)(SpinTimer* me);
-    void (*start)(SpinTimer* me, uint32_t timeMicros);
-    void (*cancel)(SpinTimer* me);
-    void (*setSyncNextStartOnLastExpiry)(SpinTimer* me, bool syncNextStartOnLastExpiry);
-    bool (*isRunning)(SpinTimer* me);
-    bool (*isExpired)(SpinTimer* me);
-    bool (*doesNextStartSyncOnLastExpiry)(SpinTimer const* const me);
-    void (*tick)(SpinTimer* me);
-    void (*assignAction)(SpinTimer* me, SpinTimerAction* action);
-    SpinTimerAction* (*action)(SpinTimer* me);
-    SpinTimer* (*next)(SpinTimer* me);
-    void (*setNext)(SpinTimer* me, SpinTimer* next);
+    SpinTimerAttributes attr;                               /*!< @ref SpinTimerAttributes */
+    SpinTimerMode (*getMode)(SpinTimer* me);                /*!< @ref SpinTimer_getMode */
+    void (*start)(SpinTimer* me, uint32_t timeMicros);      /*!< @ref SpinTimer_start */
+    void (*cancel)(SpinTimer* me);                          /*!< @ref SpinTimer_cancel */
+    void (*setSyncNextStartOnLastExpiry)(SpinTimer* me, bool syncNextStartOnLastExpiry);    /*!< @ref SpinTimer_setSyncNextStartOnLastExpiry */
+    bool (*isRunning)(SpinTimer* me);                       /*!< @ref SpinTimer_isRunning */
+    bool (*isExpired)(SpinTimer* me);                       /*!< @ref SpinTimer_isExpired */
+    bool (*doesNextStartSyncOnLastExpiry)(SpinTimer const* const me);   /*!< @ref SpinTimer_doesNextStartSyncOnLastExpiry */
+    void (*tick)(SpinTimer* me);                            /*!< @ref SpinTimer_tick */
+    void (*assignAction)(SpinTimer* me, SpinTimerAction* action);       /*!< @ref SpinTimer_assignAction */
+    SpinTimerAction* (*action)(SpinTimer* me);              /*!< @ref SpinTimer_action */
+    SpinTimer* (*next)(SpinTimer* me);                      /*!< @ref SpinTimer_next */
+    void (*setNext)(SpinTimer* me, SpinTimer* next);        /*!< @ref SpinTimer_setNext */
 };
 
 /**
  * @brief Constructor.
  * @details Allocates memory for a SpinTimer object on the heap and attaches itself to the list of timer objects held by SpinTimerContext.
- * @param mode Operation mode {SpinTimerMode_oneShot|SpinTimerMode_continuous}
+ * @param mode @ref SpinTimerMode
  * @return SpinTimer* Pointer to the created SpinTimer object.
  */
 SpinTimer* SpinTimer_create(SpinTimerMode mode);
@@ -58,7 +62,7 @@ SpinTimer* SpinTimer_create(SpinTimerMode mode);
  * @brief Initializer.
  * @details Initializes the SpinTimer object and attaches itself to the list of timer objects held by SpinTimerContext. To be called on SpinTimer objects created on stack. Called by the constructor too.
  * @param me Pointer to this SpinTimer object.
- * @param mode Operation mode {SpinTimerMode_oneShot|SpinTimerMode_continuous}
+ * @param mode @ref SpinTimerMode
  */
 void SpinTimer_init(SpinTimer* me, SpinTimerMode mode);
 
@@ -80,7 +84,7 @@ void SpinTimer_finalize(SpinTimer* me);
  * @brief Mode get accessor.
  * @details Returns the mode of the SpinTimer object.
  * @param me Pointer to this SpinTimer object.
- * @return SpinTimerMode {SpinTimerMode_oneShot|SpinTimerMode_continuous}
+ * @return @ref SpinTimerMode
  */
 SpinTimerMode SpinTimer_getMode(SpinTimer* me);
 
@@ -99,11 +103,11 @@ void SpinTimer_start(SpinTimer* me, uint32_t timeMicros);
  */
 void SpinTimer_cancel(SpinTimer* me);
 
-/**
+/*!
  * @brief Sync mode set accessor.
  * @details Set the sync mode.
  * @param me Pointer to this SpinTimer object.
- * @param syncNextStartOnLastExpiry true: the beginning of next interval that gets started will be aligned to the last expiry time; false: the next interval starts independantly at the current time.
+ * @param syncNextStartOnLastExpiry @ref SpinTimerAttributes::syncNextStartOnLastExpiry
  */
 void SpinTimer_setSyncNextStartOnLastExpiry(SpinTimer* me, bool syncNextStartOnLastExpiry);
 
@@ -111,8 +115,7 @@ void SpinTimer_setSyncNextStartOnLastExpiry(SpinTimer* me, bool syncNextStartOnL
  * @brief Sync mode get accessor.
  * @details Get the sync mode.
  * @param me Pointer to this SpinTimer object.
- * @return true The interval start will be aligned to the last expiry time when the timer gets started.
- * @return false The interval starts independantly at the current time when the timer gets started.
+ * @return syncNextStartOnLastExpiry @ref SpinTimerAttributes::syncNextStartOnLastExpiry
  */
 bool SpinTimer_doesNextStartSyncOnLastExpiry(SpinTimer const* const me);
 
@@ -162,14 +165,14 @@ void SpinTimer_assignAction(SpinTimer* me, SpinTimerAction* action);
 SpinTimerAction* SpinTimer_action(SpinTimer* me);
 
 /**
- * @brief Get next SpinTimer object pointer out of the linked list containing timers.
+ * @brief Get next SpinTimer object pointer out of the linked list containing SpinTimer objects.
  * @param me Pointer to this SpinTimer object.
  * @return SpinTimer object pointer or 0 if current object is the trailing list element.
  */
 SpinTimer* SpinTimer_next(SpinTimer* me);
 
 /**
- * @brief Set next SpinTimer object of the linked list containing timers.
+ * @brief Set next SpinTimer object of the linked list containing SpinTimer objects.
  * @param me Pointer to this SpinTimer object.
  * @param next SpinTimer object pointer to be set as the next element of the list.
  */

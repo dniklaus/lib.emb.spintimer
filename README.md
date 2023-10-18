@@ -1,3 +1,7 @@
+<img src="https://loading.io/s/icon/xqxmsg.svg" alt="SpinTimerLogo" width="75"/>
+
+[icon 'Timer' from loading.io](https://loading.io/icon/)
+
 lib.emb.spintimer
 =================
 

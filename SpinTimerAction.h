@@ -2,6 +2,7 @@
 #define __SpinTimerAction_H
 
 typedef struct SpinTimerAction SpinTimerAction;
+typedef struct SpinTimerActionVtable SpinTimerActionVtable;
 
 /**
  * @brief Action Interface, will notify time expired event.
@@ -10,7 +11,7 @@ typedef struct SpinTimerAction SpinTimerAction;
  */
 struct SpinTimerAction
 {
-    struct SpinTimerActionVtable const* vptr;               /*!< virtual pointer */
+    SpinTimerActionVtable const* vptr;               /*!< virtual pointer */
     void (*timeExpired)(SpinTimerAction const* const me);   /*!< Time expired event. To be implemented by specific Timer Action class (pure virtual). */
 };
 

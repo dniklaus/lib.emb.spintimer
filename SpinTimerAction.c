@@ -24,7 +24,7 @@ void SpinTimerAction_destroy(SpinTimerAction* me)
 
 void SpinTimerAction_init(SpinTimerAction* const me)
 {
-    static const struct SpinTimerActionVtable vtable = {
+    static const SpinTimerActionVtable vtable = {
         &SpinTimerAction_timeExpired
     };
     me->vptr = &vtable;

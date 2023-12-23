@@ -12,7 +12,13 @@ typedef struct SpinTimerActionVtable SpinTimerActionVtable;
 struct SpinTimerAction
 {
     SpinTimerActionVtable const* vptr;               /*!< virtual pointer */
-    void (*timeExpired)(SpinTimerAction const* const me);   /*!< Time expired event. To be implemented by specific Timer Action class (pure virtual). */
+    
+    /**
+     * @brief SpinTimer object's expiry action.
+     * @details Implementation of this will be called on the SpinTimer object's expiry when injected. Pure virtual function. 
+     * @param me Pointer to this timer action object.
+     */
+    void (*timeExpired)(SpinTimerAction const* const me);   
 };
 
 struct SpinTimerActionVtable

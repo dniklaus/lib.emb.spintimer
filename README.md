@@ -25,7 +25,7 @@ Here the integration of a SpinTimer is shown with a simple embedded application 
 #include <stdint.h>
 #include "SpinTimer.h"
 #include "SpinTimerContext.h"
-#include "SpinTimerSysTickUptimeInfoAdapter.h"
+#include "SysTickUptimeInfoAdapter.h"
 #include "HeartBeatTimerAction.h"
 
 // timer interval constant definition
@@ -35,7 +35,7 @@ int main(void)
 {
   // SpinTimer Uptime Info (10us tick)
   SpinTimerUptimeInfo* spinTimerUptimeInfo = SpinTimerUptimeInfo_instance();
-  spinTimerUptimeInfo->assignAdapter(spinTimerUptimeInfo, (SpinTimerUptimeInfoAdapter*)SpinTimerSysTickUptimeInfoAdapter_create());
+  spinTimerUptimeInfo->assignAdapter(spinTimerUptimeInfo, (SpinTimerUptimeInfoAdapter*)SysTickUptimeInfoAdapter_create());
       
   // SpinTimer HeartBeat LED
   SpinTimer* heartBeatTimer = SpinTimer_create(SpinTimerMode_continuous);
@@ -50,7 +50,7 @@ int main(void)
   return 1;
 }
 ```
-For SpinTimerSysTickUptimeInfoAdapter implementation example see in [Examples/UptimeInfoAdapter/PSoC5](Examples/UptimeInfoAdapter/PSoC5).
+For `SysTickUptimeInfoAdapter` implementation example see in [Examples/UptimeInfoAdapter/PSoC5](Examples/UptimeInfoAdapter/PSoC5).
 
 # API
 
@@ -187,6 +187,7 @@ This section describes the SpinTimer library Application Programming Interface.
   Set next SpinTimer object of the linked list containing timers.
 
   * Parameter `me`: Pointer to this SpinTimer object.
+  * Parameter `next`: Pointer to the next SpinTimer object in the list (set this to 0 if the current object is the last one).
 
 
 ## SpinTimerAction
